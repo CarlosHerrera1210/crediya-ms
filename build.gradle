@@ -23,5 +23,10 @@ subprojects {
     // Remove once it has been updated in Spring Boot
     ext['jackson-2-bom.version'] = "2.22.4"
     ext['jackson-bom.version'] = "3.2.4"
+
+    // Tests are written with JUnit Jupiter; without this Gradle uses the JUnit 4 runner and finds no tests.
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+    }
 }
 
