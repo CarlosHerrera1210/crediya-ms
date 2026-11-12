@@ -11,6 +11,7 @@ import co.com.crediya.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 
@@ -106,11 +107,10 @@ class UserUseCaseTest {
 
         ValidationException ex = assertThrows(ValidationException.class, () -> userUseCase.registerUser(input));
 
-        assertEquals(5, ex.getErrors().size());
+        assertEquals(4, ex.getErrors().size());
         assertTrue(ex.getErrors().contains("El campo nombres es obligatorio"));
         assertTrue(ex.getErrors().contains("El campo apellidos es obligatorio"));
         assertTrue(ex.getErrors().contains("El campo correo_electronico es obligatorio"));
-        assertTrue(ex.getErrors().contains("El campo documento_identidad es obligatorio"));
         assertTrue(ex.getErrors().contains("El campo salario_base es obligatorio"));
         verify(userRepository, never()).existsByEmail(anyString());
         verify(userRepository, never()).save(any());
@@ -205,6 +205,19 @@ class UserUseCaseTest {
         verify(userRepository).existsByDocumentNumber("1020304050");
         verify(userRepository).save(captor.capture());
         assertEquals("1020304050", captor.getValue().getDocumentNumber());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", "   "})
+    void shouldRegisterWithoutDocumentNumber(String documentNumber) {
+        User result = userUseCase.registerUser(validUser().toBuilder().documentNumber(documentNumber).build());
+
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(captor.capture());
+        assertNull(captor.getValue().getDocumentNumber());
+        verify(userRepository, never()).existsByDocumentNumber(any());
+        assertEquals(CLIENT_ROLE_ID, result.getRoleId());
     }
 
     @Test
