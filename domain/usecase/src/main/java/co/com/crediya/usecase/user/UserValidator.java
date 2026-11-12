@@ -37,9 +37,8 @@ final class UserValidator {
         } else if (!EMAIL_PATTERN.matcher(user.getEmail()).matches()) {
             errors.add("El campo correo_electronico no tiene un formato válido");
         }
-        if (isBlank(user.getDocumentNumber())) {
-            errors.add("El campo documento_identidad es obligatorio");
-        } else if (user.getDocumentNumber().length() > MAX_DOCUMENT_LENGTH) {
+        // documento_identidad is optional (not part of the HU01 required fields), validated only when present.
+        if (!isBlank(user.getDocumentNumber()) && user.getDocumentNumber().length() > MAX_DOCUMENT_LENGTH) {
             errors.add("El campo documento_identidad no puede tener más de " + MAX_DOCUMENT_LENGTH + " caracteres");
         }
         if (user.getBaseSalary() == null) {

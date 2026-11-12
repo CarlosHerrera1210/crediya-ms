@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     telefono            VARCHAR(30),
     correo_electronico  VARCHAR(150)   NOT NULL,
     salario_base        NUMERIC(15, 2) NOT NULL,
-    documento_identidad VARCHAR(20)    NOT NULL,
+    documento_identidad VARCHAR(20),
     id_rol              INTEGER        NOT NULL,
     CONSTRAINT pk_usuarios PRIMARY KEY (id_usuario),
     CONSTRAINT uk_usuarios_correo UNIQUE (correo_electronico),

@@ -34,7 +34,8 @@ public class UserUseCase {
             throw new EmailAlreadyRegisteredException(normalized.getEmail());
         }
 
-        if (userRepository.existsByDocumentNumber(normalized.getDocumentNumber())) {
+        if (normalized.getDocumentNumber() != null
+                && userRepository.existsByDocumentNumber(normalized.getDocumentNumber())) {
             LOG.log(Level.WARNING, "Registro rechazado: el documento {0} ya existe", normalized.getDocumentNumber());
             throw new DocumentAlreadyRegisteredException(normalized.getDocumentNumber());
         }
@@ -82,12 +83,20 @@ public class UserUseCase {
                 .lastNames(trim(user.getLastNames()))
                 .address(trim(user.getAddress()))
                 .phone(trim(user.getPhone()))
-                .documentNumber(trim(user.getDocumentNumber()))
+                .documentNumber(trimToNull(user.getDocumentNumber()))
                 .email(user.getEmail() == null ? null : user.getEmail().trim().toLowerCase(Locale.ROOT))
                 .build();
     }
 
     private static String trim(String value) {
         return value == null ? null : value.trim();
+    }
+
+    /**
+     * Blank optional values are stored as null so the unique constraint does not treat them as duplicates.
+     */
+    private static String trimToNull(String value) {
+        String trimmed = trim(value);
+        return trimmed == null || trimmed.isEmpty() ? null : trimmed;
     }
 }

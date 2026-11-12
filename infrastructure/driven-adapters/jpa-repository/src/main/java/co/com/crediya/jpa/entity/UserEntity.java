@@ -55,7 +55,7 @@ public class UserEntity {
     @Column(name = "salario_base", nullable = false, precision = 15, scale = 2)
     private BigDecimal baseSalary;
 
-    @Column(name = "documento_identidad", nullable = false, length = 20)
+    @Column(name = "documento_identidad", length = 20)
     private String documentNumber;
 
     @Column(name = "id_rol", nullable = false)
